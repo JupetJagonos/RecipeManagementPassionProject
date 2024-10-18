@@ -1,0 +1,100 @@
+﻿@model RecipeManagementSystem.Models.Recipe
+
+@{
+    ViewData["Title"] = "Edit Recipe";
+}
+
+<h1 class="mt-4">Edit Recipe</h1>
+
+<div class="card mb-4">
+    <div class="card-header">
+        <h4 class="card-title">Details</h4>
+    </div>
+    <div class="card-body">
+        <form asp-action="Edit" method="post">
+            <input type="hidden" asp-for="RecipeId" />
+
+            <div class="mb-3">
+                <label asp-for="Name" class="form-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="CategoryId" class="form-label">Category</label>
+                <select asp-for="CategoryId" asp-items="ViewBag.CategoryId" class="form-select"></select>
+                <span asp-validation-for="CategoryId" class="text-danger"></span>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center mt-4">
+                <h3 class="me-3">Ingredients</h3>
+                <button type="button" id="addIngredientButton" class="btn btn-secondary">Add</button>
+            </div>
+
+            <div id="ingredientsContainer" class="mt-2">
+                @if (Model.RecipeIngredients != null && Model.RecipeIngredients.Any())
+                {
+                    var index = 0;
+                    foreach (var recipeIngredient in Model.RecipeIngredients)
+                    {
+                        <div class="mb-3 ingredient-item d-flex align-items-center">
+                            <select name="RecipeIngredients[@index].IngredientId" asp-for="@recipeIngredient.IngredientId" asp-items="ViewBag.Ingredients" class="form-select me-2">
+                                <option value="">Select an ingredient</option>
+                            </select>
+                            <button type="button" class="btn btn-danger remove-ingredient">Remove</button>
+                        </div>
+                        index++;
+                    }
+                }
+                else
+                {
+                    <div class="mb-3 ingredient-item d-flex align-items-center">
+                        <select name="RecipeIngredients[0].IngredientId" class="form-select me-2" asp-items="ViewBag.Ingredients">
+                            <option value="">Select an ingredient</option>
+                        </select>
+                        <button type="button" class="btn btn-danger remove-ingredient">Remove</button>
+                    </div>
+                }
+            </div>
+
+            <!-- Hidden select element for ingredient options -->
+            <select id="hiddenIngredientSelect" style="display:none;" asp-items="ViewBag.Ingredients"></select>
+
+            <button type="submit" class="btn btn-primary">Save</button>
+            <a asp-action="Index" class="btn btn-secondary">Back</a>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.getElementById('addIngredientButton').addEventListener('click', function () {
+            const ingredientsContainer = document.getElementById('ingredientsContainer');
+            const index = ingredientsContainer.children.length;
+
+            // Create a new ingredient item
+            const newIngredientItem = document.createElement('div');
+            newIngredientItem.className = 'mb-3 ingredient-item d-flex align-items-center';
+            newIngredientItem.innerHTML = `
+                <select name="RecipeIngredients[${index}].IngredientId" class="form-select me-2">
+                    <option value="">Select an ingredient</option>
+                </select>
+                <button type="button" class="btn btn-danger remove-ingredient">Remove</button>`;
+
+            const hiddenSelect = document.getElementById('hiddenIngredientSelect');
+            const options = hiddenSelect.options;
+            const newSelect = newIngredientItem.querySelector('select');
+            for (let i = 0; i < options.length; i++) {
+                const option = options[i].cloneNode(true);
+                newSelect.appendChild(option);
+            }
+            ingredientsContainer.appendChild(newIngredientItem);
+        });
+
+        document.getElementById('ingredientsContainer').addEventListener('click', function (event) {
+            if (event.target.classList.contains('remove-ingredient')) {
+                event.target.closest('.ingredient-item').remove();
+            }
+        });
+    </script>
+}

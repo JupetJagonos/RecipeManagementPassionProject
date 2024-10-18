@@ -1,0 +1,24 @@
+﻿@model RecipeManagementSystem.Models.Ingredient
+
+@{
+    ViewData["Title"] = "Create Ingredient";
+}
+
+<h1 class="mt-4">Create Ingredient</h1>
+
+<div class="card mb-4">
+    <div class="card-header">
+        <h4 class="card-title">Details</h4>
+    </div>
+    <div class="card-body">
+        <form asp-action="Create">
+            <div class="mb-3">
+                <label asp-for="Name" class="form-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <button type="submit" class="btn btn-primary">Create</button>
+            <a asp-action="Index" class="btn btn-secondary">Back</a>
+        </form>
+    </div>
+</div>
